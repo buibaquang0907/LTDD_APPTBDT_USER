@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "391700510888",
+    "project_id": "doanltdd-f2a4d",
+    "storage_bucket": "doanltdd-f2a4d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:391700510888:android:277b50aedbbb61824eaa9d",
+        "android_client_info": {
+          "package_name": "com.example.shoptbdt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwxui5shMRkgYTwfhvML4uYXmITnW7-1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
