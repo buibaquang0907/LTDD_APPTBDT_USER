@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shoptbdt.MainActivity;
@@ -31,12 +32,20 @@ public class LoginActivity extends AppCompatActivity {
         editTextLoginEmail = findViewById(R.id.editTextLoginEmail);
         editTextLoginPassword = findViewById(R.id.editTextLoginPassword);
         Button btnLogin = findViewById(R.id.buttonLogin);
+        TextView txtRegister = findViewById(R.id.txtRegister);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = editTextLoginEmail.getText().toString().trim();
                 String password = editTextLoginPassword.getText().toString().trim();
                 login(email, password);
+            }
+        });
+        txtRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+
             }
         });
     }
@@ -55,6 +64,5 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

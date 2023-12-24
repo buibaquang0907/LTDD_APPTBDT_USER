@@ -6,21 +6,17 @@ public class Products {
     private String id;
     private String name;
     private String image;
-    private boolean isFavourite;
     private double price;
-    private int quantity;
     private String description;
     private String status;
 
     private DocumentReference category;
 
-    public Products(String id, String name, String image, boolean isFavourite, double price, int quantity, String description, String status, DocumentReference category) {
+    public Products(String id, String name, String image, double price, String description, String status, DocumentReference category) {
         this.id = id;
         this.name = name;
         this.image = image;
-        this.isFavourite = isFavourite;
         this.price = price;
-        this.quantity = quantity;
         this.description = description;
         this.status = status;
         this.category = category;
@@ -53,28 +49,12 @@ public class Products {
         this.image = image;
     }
 
-    public boolean isFavourite() {
-        return isFavourite;
-    }
-
-    public void setFavourite(boolean favourite) {
-        isFavourite = favourite;
-    }
-
     public double getPrice() {
         return price;
     }
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public String getDescription() {

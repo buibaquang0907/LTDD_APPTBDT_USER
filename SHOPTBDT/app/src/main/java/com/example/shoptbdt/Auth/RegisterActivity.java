@@ -43,6 +43,13 @@ public class RegisterActivity extends AppCompatActivity {
         editName = findViewById(R.id.editTextName);
         editPhone = findViewById(R.id.editTextPhone);
         btnRegister = findViewById(R.id.buttonRegister);
+        Button btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
