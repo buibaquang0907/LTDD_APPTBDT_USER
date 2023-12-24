@@ -13,6 +13,21 @@
         android:theme="@style/Theme.SHOPTBDT"
         tools:targetApi="31">
         <activity
+            android:name=".Screen.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Screen.SplashScreenActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Screen.EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".Screen.YourReviewsActivity"
             android:exported="false" />
         <activity
@@ -25,15 +40,6 @@
             android:name=".Screen.YourOrdersActivity"
             android:exported="false" />
         <activity
-            android:name=".Auth.WelcomeActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".Screen.SupportActivity"
             android:exported="false" />
         <activity
@@ -41,12 +47,10 @@
             android:exported="false" />
         <activity
             android:name=".Auth.LoginActivity"
-            android:exported="false" />
+            android:exported="false"></activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
     </application>
 
 </manifest>
