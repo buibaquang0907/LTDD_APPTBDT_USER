@@ -87,9 +87,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void saveUserFirestore(String userId, String email, String name, String phone, String image, String address) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        User user = new User(email, null, name, phone, image, address);
+        User user = new User(userId, email, null, name, phone, image, address);
 
         Map<String, Object> userMap = new HashMap<>();
+        userMap.put("id",user.getId());
         userMap.put("email", user.getEmail());
         userMap.put("name", user.getName());
         userMap.put("phone", user.getPhone());

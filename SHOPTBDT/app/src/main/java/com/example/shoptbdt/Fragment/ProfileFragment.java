@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.shoptbdt.Auth.LoginActivity;
+import com.example.shoptbdt.Models.User;
 import com.example.shoptbdt.R;
 import com.example.shoptbdt.Screen.AboutUsActivity;
 import com.example.shoptbdt.Screen.ChangePasswordActivity;
@@ -24,6 +27,10 @@ import com.example.shoptbdt.Screen.SupportActivity;
 import com.example.shoptbdt.Screen.YourOrdersActivity;
 import com.example.shoptbdt.Screen.YourReviewsActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfileFragment extends Fragment {
 
@@ -61,12 +68,14 @@ public class ProfileFragment extends Fragment {
     ImageView imgImageUser;
     TextView txtNameUser, txtEmailUser;
 
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
     @Override
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
         imgImageUser = view.findViewById(R.id.imgImageUser);
         txtEmailUser = view.findViewById(R.id.txtEmailUser);
         txtNameUser = view.findViewById(R.id.txtNameUser);
@@ -79,6 +88,35 @@ public class ProfileFragment extends Fragment {
         btnAboutUs = view.findViewById(R.id.btnAboutUs);
         btnLogOut = view.findViewById(R.id.btnLogOut);
         btnChangePassword = view.findViewById(R.id.btnChangePassword);
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+            userRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        User user = document.toObject(User.class);
+                        String imageUrl = user.getImage();
+                        if (imageUrl != null) {
+                            Glide.with(this)
+                                    .load(imageUrl)
+                                    .into(imgImageUser);
+                        } else {
+                            imgImageUser.setImageResource(R.drawable.person);
+                        }
+                        txtNameUser.setText(user.getName());
+                        txtEmailUser.setText(user.getEmail());
+                    } else {
+                        Log.d("EditProfileActivity", "User data is null");
+                    }
+                } else {
+                    Log.d("EditProfileActivity", "No such document");
+                }
+            });
+        } else {
+            Log.d("EditProfileActivity", "Unknown... -> No information user login");
+        }
 
 
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
@@ -145,4 +183,5 @@ public class ProfileFragment extends Fragment {
         });
         return view;
     }
+
 }
