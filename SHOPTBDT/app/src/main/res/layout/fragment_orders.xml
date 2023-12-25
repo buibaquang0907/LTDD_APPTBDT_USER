@@ -24,19 +24,20 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/recyclerViewOrders"
         android:gravity="center"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/txtListEmpty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Orders Is Empty"
+            android:text="Orders is Empty"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:textStyle="italic"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:textStyle="italic" />
     </LinearLayout>
 
 </RelativeLayout>

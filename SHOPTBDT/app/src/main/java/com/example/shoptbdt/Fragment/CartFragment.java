@@ -1,5 +1,6 @@
 package com.example.shoptbdt.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,9 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.shoptbdt.R;
+import com.example.shoptbdt.Screen.CheckOut.CheckOutFromCartActivity;
 
 public class CartFragment extends Fragment {
 
@@ -43,12 +46,36 @@ public class CartFragment extends Fragment {
         }
     }
 
+    TextView textViewEmpty, txtTotal;
+    Button btnContinue;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
         RecyclerView recyclerViewCart = view.findViewById(R.id.recyclerViewCart);
-        TextView textView = view.findViewById(R.id.textViewEmpty);
+        textViewEmpty = view.findViewById(R.id.textViewEmpty);
+        txtTotal = view.findViewById(R.id.txtTotal);
+        btnContinue = view.findViewById(R.id.btnContinue);
+
+//        if (recyclerViewCart.getAdapter() != null && recyclerViewCart.getAdapter().getItemCount() > 0) {
+//            recyclerViewCart.setVisibility(View.VISIBLE);
+//            textViewEmpty.setVisibility(View.GONE);
+//            //
+//
+//        } else {
+//            recyclerViewCart.setVisibility(View.GONE);
+//            textViewEmpty.setVisibility(View.VISIBLE);
+//        }
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CheckOutFromCartActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
+
 }

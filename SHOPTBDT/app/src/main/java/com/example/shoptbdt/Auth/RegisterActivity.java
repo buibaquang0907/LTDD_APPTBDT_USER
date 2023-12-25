@@ -56,6 +56,39 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = editEmail.getText().toString().trim();
                 String password = editPassword.getText().toString().trim();
+                String name = editName.getText().toString().trim();
+                String phone = editPhone.getText().toString().trim();
+                if (email.isEmpty()) {
+                    editEmail.setError("Email cannot be empty");
+                    editEmail.requestFocus();
+                    return;
+                }
+
+                if (password.isEmpty()) {
+                    editPassword.setError("Password cannot be empty");
+                    editPassword.requestFocus();
+                    return;
+                }
+
+                String passwordPattern = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
+                if (!password.matches(passwordPattern)) {
+                    editPassword.setError("Password must contain at least one digit, one special character, and be at least 8 characters long");
+                    editPassword.requestFocus();
+                    return;
+                }
+
+                if (name.isEmpty()) {
+                    editName.setError("Name cannot be empty");
+                    editName.requestFocus();
+                    return;
+                }
+
+                if (phone.isEmpty()) {
+                    editPhone.setError("Phone cannot be empty");
+                    editPhone.requestFocus();
+                    return;
+                }
+
                 registerUser(email, password);
             }
         });
@@ -90,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
         User user = new User(userId, email, null, name, phone, image, address);
 
         Map<String, Object> userMap = new HashMap<>();
-        userMap.put("id",user.getId());
+        userMap.put("id", user.getId());
         userMap.put("email", user.getEmail());
         userMap.put("name", user.getName());
         userMap.put("phone", user.getPhone());

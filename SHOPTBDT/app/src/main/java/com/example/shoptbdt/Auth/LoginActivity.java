@@ -41,6 +41,17 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = editTextLoginEmail.getText().toString().trim();
                 String password = editTextLoginPassword.getText().toString().trim();
+                if (email.isEmpty()) {
+                    editTextLoginEmail.setError("Email cannot be empty");
+                    editTextLoginEmail.requestFocus();
+                    return;
+                }
+
+                if (password.isEmpty()) {
+                    editTextLoginPassword.setError("Password cannot be empty");
+                    editTextLoginPassword.requestFocus();
+                    return;
+                }
                 login(email, password);
             }
         });
