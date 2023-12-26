@@ -2,7 +2,9 @@ package com.example.shoptbdt.Models;
 
 import com.google.firebase.firestore.DocumentReference;
 
-public class Products {
+import java.io.Serializable;
+
+public class Products implements Serializable {
     private String id;
     private String name;
     private String image;

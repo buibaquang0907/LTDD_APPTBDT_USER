@@ -13,20 +13,20 @@
         android:scaleType="centerCrop" />
 
     <TextView
-        android:id="@+id/textViewProductName"
+        android:id="@+id/textViewProductDetailName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/textViewProductPrice"
+        android:id="@+id/textViewProductDetailPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/buttonChangeProductName"
+        android:id="@+id/buttonChangeProductDetailName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Change Product Name"

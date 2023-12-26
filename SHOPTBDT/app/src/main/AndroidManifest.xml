@@ -13,6 +13,9 @@
         android:theme="@style/Theme.SHOPTBDT"
         tools:targetApi="31">
         <activity
+            android:name=".Screen.ProductsDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".Screen.CheckOut.CheckOutFromHomeActivity"
             android:exported="false" />
         <activity

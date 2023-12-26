@@ -3,11 +3,13 @@ package com.example.shoptbdt.Fragment;
 import static android.content.ContentValues.TAG;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -20,6 +22,7 @@ import com.example.shoptbdt.Adapter.ProductAdapter;
 import com.example.shoptbdt.Models.Categories;
 import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.R;
+import com.example.shoptbdt.Screen.ProductsDetailActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -150,20 +153,9 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
 
     @Override
     public void onProductClick(Products product) {
-        ProductDetailsFragment detailsFragment = new ProductDetailsFragment();
-        detailsFragment.setProduct(product);
+        Intent intent = new Intent(getActivity(), ProductsDetailActivity.class);
+        intent.putExtra("product", product);
+        startActivity(intent);
 
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_home, detailsFragment)
-                .addToBackStack(null)
-                .commit();
-
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//        builder.setTitle("Product Name");
-//
-//
-//        builder.setMessage(product.getName());
-//        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-//        builder.show();
     }
 }
