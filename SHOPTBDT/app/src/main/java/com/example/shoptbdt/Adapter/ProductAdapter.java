@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,9 +19,13 @@ import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder>{
     private List<Products> listProducts;
-
-    public ProductAdapter(List<Products> listProducts) {
+    private OnProductClickListener productClickListener;
+    public interface OnProductClickListener {
+        void onProductClick(Products product);
+    }
+    public ProductAdapter(List<Products> listProducts, OnProductClickListener productClickListener) {
         this.listProducts = listProducts;
+        this.productClickListener = productClickListener;
     }
 
 
@@ -30,7 +35,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View productView = inflater.inflate(R.layout.item_product, parent, false);
-        ViewHolder viewHolder = new ProductAdapter.ViewHolder(productView);
+        ViewHolder viewHolder = new ProductAdapter.ViewHolder(productView,productClickListener);
         return viewHolder;
     }
 
@@ -42,6 +47,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Glide.with(holder.itemView.getContext())
                 .load(temp.getImage())
                 .into(holder.imageViewProduct);
+
+        holder.buttonView.setOnClickListener(view -> holder.productClickListener.onProductClick(temp));
     }
 
     @Override
@@ -52,12 +59,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageViewProduct;
         TextView textViewNameProduct, textViewPrice;
-        public ViewHolder(@NonNull View itemView) {
+        Button buttonView;
+        OnProductClickListener productClickListener;
+        public ViewHolder(@NonNull View itemView,OnProductClickListener productClickListener) {
             super(itemView);
 
             imageViewProduct = (ImageView) itemView.findViewById(R.id.imageViewProduct);
             textViewNameProduct = (TextView) itemView.findViewById(R.id.textViewNameProduct);
             textViewPrice = (TextView) itemView.findViewById(R.id.textViewPrice);
+            buttonView = itemView.findViewById(R.id.btnViewProductDetail);
+
+            this.productClickListener = productClickListener;
         }
     }
 }

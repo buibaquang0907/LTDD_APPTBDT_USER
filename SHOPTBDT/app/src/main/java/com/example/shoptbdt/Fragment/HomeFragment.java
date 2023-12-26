@@ -2,6 +2,7 @@ package com.example.shoptbdt.Fragment;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements ProductAdapter.OnProductClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -82,7 +83,7 @@ public class HomeFragment extends Fragment {
         recyclerViewProducts = view.findViewById(R.id.recyclerViewProducts);
         recyclerViewProducts.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         productList = new ArrayList<>();
-        productAdapter = new ProductAdapter(productList);
+        productAdapter = new ProductAdapter(productList, this);
         recyclerViewProducts.setAdapter(productAdapter);
         fetchProductsFromFirestore();
 
@@ -145,5 +146,24 @@ public class HomeFragment extends Fragment {
         Gson gson = new Gson();
         String jsonString = gson.toJson(data);
         return gson.fromJson(jsonString, Products.class);
+    }
+
+    @Override
+    public void onProductClick(Products product) {
+        ProductDetailsFragment detailsFragment = new ProductDetailsFragment();
+        detailsFragment.setProduct(product);
+
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_home, detailsFragment)
+                .addToBackStack(null)
+                .commit();
+
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//        builder.setTitle("Product Name");
+//
+//
+//        builder.setMessage(product.getName());
+//        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+//        builder.show();
     }
 }

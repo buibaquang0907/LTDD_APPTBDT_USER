@@ -34,5 +34,11 @@
             android:paddingTop="4dp"
             android:text="@string/app_name"
             android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btnViewProductDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Detail" />
     </LinearLayout>
 </LinearLayout>
