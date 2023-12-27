@@ -49,6 +49,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 .into(holder.imageViewProduct);
 
         holder.buttonView.setOnClickListener(view -> holder.productClickListener.onProductClick(temp));
+
     }
 
     @Override
@@ -71,5 +72,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
             this.productClickListener = productClickListener;
         }
+
     }
+
+
 }

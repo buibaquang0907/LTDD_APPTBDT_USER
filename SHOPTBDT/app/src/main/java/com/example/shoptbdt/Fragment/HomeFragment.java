@@ -156,6 +156,5 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         Intent intent = new Intent(getActivity(), ProductsDetailActivity.class);
         intent.putExtra("product", product);
         startActivity(intent);
-
     }
 }

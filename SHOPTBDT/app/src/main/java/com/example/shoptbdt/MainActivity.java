@@ -16,7 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 
 public class MainActivity extends AppCompatActivity {
-
+    private ShoppingCart shoppingCart;
     NavController navController;
 
     @Override
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        shoppingCart = ShoppingCart.getInstance();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
