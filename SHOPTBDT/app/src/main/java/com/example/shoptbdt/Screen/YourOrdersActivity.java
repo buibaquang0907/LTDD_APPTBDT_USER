@@ -1,6 +1,7 @@
 package com.example.shoptbdt.Screen;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.shoptbdt.Adapter.ProductAdapter;
 import com.example.shoptbdt.Models.Orders;
 import com.example.shoptbdt.Models.Products;
@@ -25,6 +33,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.stripe.android.PaymentConfiguration;
+import com.stripe.android.paymentsheet.PaymentSheet;
+import com.stripe.android.paymentsheet.PaymentSheetResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,6 +57,12 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
     private ShoppingCart shoppingCart;
     Button btnPayment;
     private User userFirebase;
+    String Publishablekey = "pk_test_51NcQH0CizuobP5vV9ZC0fDWT25Or9yeykFi2i5JXqARUstruauJWUMJqSDUIz2OxQj8vV1fa0Ytmolnmltx1xl1s00bihWFCpt";
+    String Secretkey = "sk_test_51NcQH0CizuobP5vVKDY72s3RjPXJ6c0uyHGYZehGXOx3wzrWbKkoMGrbVB0ZC0kW7Oxe9EibT00T03GPlzIkDi6N00LjkfH6eP";
+    String CustomerId;
+    String EnphericalKey;
+    String ClientSecret;
+    PaymentSheet paymentSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +87,164 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveOrders();
+                paymentFlow();
 
             }
         });
 
+        PaymentConfiguration.init(this, Publishablekey);
+        paymentSheet = new PaymentSheet(this,paymentSheetResult -> {
+            onPaymentResult(paymentSheetResult);
+        });
+
+
+        createCustomerAndGetId();
     }
+    private void paymentFlow() {
+        if (ClientSecret == null || EnphericalKey == null) {
+            Log.e("PaymentFlow", "ClientSecret or EnphericalKey is null");
+            return;
+        }
+
+        paymentSheet.presentWithPaymentIntent(
+                ClientSecret,
+                new PaymentSheet.Configuration(
+                        "TBDT-Shop", // Replace with your actual business name
+                        new PaymentSheet.CustomerConfiguration(CustomerId, EnphericalKey)
+                )
+        );
+    }
+
+    private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
+        if (paymentSheetResult instanceof PaymentSheetResult.Completed) {
+            saveOrders();
+            shoppingCart.clearCart();
+            Toast.makeText(YourOrdersActivity.this, "Payment succeeded", Toast.LENGTH_SHORT).show();
+        }
+        // Handle other cases (Cancelled, Failed, etc.)
+    }
+    private void getClientSecret(String customerId, String enphericalKey) {
+        StringRequest request = new StringRequest(Request.Method.POST, "https://api.stripe.com/v1/payment_intents", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    ClientSecret = object.getString("client_secret");
+                    Toast.makeText(YourOrdersActivity.this,CustomerId,Toast.LENGTH_SHORT).show();
+
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(YourOrdersActivity.this,error.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                Map<String, String> header = new HashMap<>();
+                header.put("Authorization","Bearer " + Secretkey);
+
+
+
+                return header;
+            }
+
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("customer",CustomerId);
+                params.put("amount","100"+"00");
+                params.put("currency","USD");
+                params.put("automatic_payment_methods[enabled]","true");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(request);
+    }
+    private void getEnphericalKey() {
+        StringRequest request = new StringRequest(Request.Method.POST, "https://api.stripe.com/v1/ephemeral_keys", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    EnphericalKey = object.getString("id");
+                    Toast.makeText(YourOrdersActivity.this,CustomerId,Toast.LENGTH_SHORT).show();
+                    getClientSecret(CustomerId,EnphericalKey);
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(YourOrdersActivity.this,error.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                Map<String, String> header = new HashMap<>();
+                header.put("Authorization","Bearer " + Secretkey);
+
+                header.put("Stripe-Version", "2022-11-15");
+
+                return header;
+            }
+
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("customer",CustomerId);
+
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(request);
+    }
+
+    private void createCustomerAndGetId() {
+        StringRequest request = new StringRequest(Request.Method.POST, "https://api.stripe.com/v1/customers", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    CustomerId = object.getString("id");
+                    Toast.makeText(YourOrdersActivity.this, CustomerId, Toast.LENGTH_SHORT).show();
+                    getEnphericalKey();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(YourOrdersActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> header = new HashMap<>();
+                header.put("Authorization", "Bearer " + Secretkey);
+                return header;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(request);
+    }
+
 
     @Override
     public void onProductClick(Products product) {

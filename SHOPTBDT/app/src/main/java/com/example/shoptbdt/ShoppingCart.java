@@ -15,6 +15,8 @@ public class ShoppingCart {
         cartItems = new ArrayList<>();
     }
 
+
+
     public static synchronized ShoppingCart getInstance() {
         if (instance == null) {
             instance = new ShoppingCart();
@@ -28,6 +30,10 @@ public class ShoppingCart {
     public void removeToCart(Products product) {
         cartItems.remove(product);
     }
+    public void clearCart(){
+        cartItems.clear();
+    }
+
     public List<Products> getShoppingCart(){return cartItems;}
     public int getLenghtShoppingCart() {return cartItems.size();}
 
