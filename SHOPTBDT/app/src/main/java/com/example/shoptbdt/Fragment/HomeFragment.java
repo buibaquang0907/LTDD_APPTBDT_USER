@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -84,7 +85,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
 
         // Products
         recyclerViewProducts = view.findViewById(R.id.recyclerViewProducts);
-        recyclerViewProducts.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerViewProducts.setLayoutManager(new GridLayoutManager(getContext(), 2));
         productList = new ArrayList<>();
         productAdapter = new ProductAdapter(productList, this);
         recyclerViewProducts.setAdapter(productAdapter);

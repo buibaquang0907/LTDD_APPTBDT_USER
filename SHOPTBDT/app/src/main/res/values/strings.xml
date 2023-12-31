@@ -2,4 +2,5 @@
     <string name="app_name">SHOPTBDT</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_web_client_id">391700510888-hib5l09u06h539493327dc7kh8u091p7.apps.googleusercontent.com</string>
 </resources>
