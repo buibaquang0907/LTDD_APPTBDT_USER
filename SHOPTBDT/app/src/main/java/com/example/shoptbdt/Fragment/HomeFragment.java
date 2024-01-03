@@ -2,17 +2,27 @@ package com.example.shoptbdt.Fragment;
 
 import static android.content.ContentValues.TAG;
 
-import android.app.AlertDialog;
+import static androidx.core.location.LocationManagerCompat.getCurrentLocation;
+
+import android.Manifest;
+
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +34,8 @@ import com.example.shoptbdt.Models.Categories;
 import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.R;
 import com.example.shoptbdt.Screen.ProductsDetailActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,8 +43,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -57,21 +71,50 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         return fragment;
     }
 
+    private TextView txtLocation;
     private EditText editTextSearch;
     private RecyclerView recyclerViewCategories;
     private CategoriesAdapter categoriesAdapter;
     private List<Categories> categoriesList;
-
     private RecyclerView recyclerViewProducts;
     private List<Products> productList;
     private ProductAdapter productAdapter;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Yêu cầu quyền từ người dùng
+            ActivityCompat.requestPermissions(
+                    getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION
+            );
+        } else {
+            getCurrentLocation();
+        }
+        txtLocation = view.findViewById(R.id.txtLocation);
+
         editTextSearch = view.findViewById(R.id.editTextSearch);
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                filterProducts(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
 
         //Categories
         recyclerViewCategories = view.findViewById(R.id.recyclerViewCategories);
@@ -80,12 +123,12 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         categoriesList = new ArrayList<>();
         categoriesAdapter = new CategoriesAdapter(categoriesList);
         recyclerViewCategories.setAdapter(categoriesAdapter);
-
         getCategoriesFromFireStore();
 
         // Products
         recyclerViewProducts = view.findViewById(R.id.recyclerViewProducts);
         recyclerViewProducts.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
         productList = new ArrayList<>();
         productAdapter = new ProductAdapter(productList, this);
         recyclerViewProducts.setAdapter(productAdapter);
@@ -158,4 +201,52 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         intent.putExtra("product", product);
         startActivity(intent);
     }
+
+    private void filterProducts(@NonNull String searchText) {
+        List<Products> filteredList = new ArrayList<>();
+
+        if (!searchText.isEmpty()) {
+            for (Products product : productList) {
+                if (product.getName().toLowerCase().contains(searchText.toLowerCase())) {
+                    filteredList.add(product);
+                }
+            }
+        } else {
+            filteredList.addAll(productList);
+        }
+
+        productAdapter.filterList(filteredList);
+    }
+
+    private void getCurrentLocation() {
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(requireActivity(), location -> {
+                    if (location != null) {
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        getAddressFromLocation(latitude, longitude);
+                    }
+                })
+                .addOnFailureListener(requireActivity(), e -> {
+                    Log.e(TAG, "Error getting location", e);
+                });
+    }
+
+    private void getAddressFromLocation(double latitude, double longitude) {
+        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses != null && addresses.size() > 0) {
+                Address address = addresses.get(0);
+                txtLocation.setText("Address: " + address.getAddressLine(0));
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error getting address from location", e);
+        }
+    }
+
 }

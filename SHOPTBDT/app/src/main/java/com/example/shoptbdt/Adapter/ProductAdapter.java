@@ -15,19 +15,26 @@ import com.bumptech.glide.Glide;
 import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder>{
     private List<Products> listProducts;
+    private List<Products> originalList;
     private OnProductClickListener productClickListener;
     public interface OnProductClickListener {
         void onProductClick(Products product);
     }
     public ProductAdapter(List<Products> listProducts, OnProductClickListener productClickListener) {
         this.listProducts = listProducts;
+        this.originalList = listProducts;
         this.productClickListener = productClickListener;
     }
 
+    public void filterList(List<Products> filteredList) {
+        listProducts = filteredList;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override

@@ -8,14 +8,14 @@
     android:id="@+id/fragment_home">
 
     <TextView
-        android:id="@+id/txtTitle"
+        android:id="@+id/txtLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TECH SHOP"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textStyle="bold" />
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:textSize="16sp"
+        android:textAlignment="center">
+    </TextView>
 
     <EditText
         android:id="@+id/editTextSearch"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/border_background"
         android:clipToPadding="false"
-        android:padding="16dp" />
+        android:padding="10dp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

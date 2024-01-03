@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.shoptbdt.Auth.LoginActivity;
+import com.example.shoptbdt.EmailSender;
 import com.example.shoptbdt.Models.User;
 import com.example.shoptbdt.R;
 import com.example.shoptbdt.Screen.AboutUsActivity;
@@ -158,8 +159,16 @@ public class ProfileFragment extends Fragment {
         btnAboutUs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AboutUsActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), AboutUsActivity.class);
+//                startActivity(intent);
+                String name = "Quang";
+                String email = "bquangzzx@gmail.com";
+                String subject = "Test Subject";
+                String message = "Hello, this is a test email!";
+
+                // Call the sendEmail method
+                // Test Send Email
+                EmailSender.sendEmail(name, email, subject, message);
             }
         });
         btnChangePassword.setOnClickListener(new View.OnClickListener() {
