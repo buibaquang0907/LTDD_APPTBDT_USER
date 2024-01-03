@@ -16,14 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SHOPTBDT"
         android:usesCleartextTraffic="true"
-<<<<<<< Updated upstream
         tools:targetApi="31">
         <activity
             android:name=".Screen.Rating.RatingActivity"
             android:exported="false" />
-=======
-        tools:targetApi="31" >
->>>>>>> Stashed changes
         <activity
             android:name=".Screen.ProductsDetailActivity"
             android:exported="false" />
