@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class ProductsDetailActivity extends AppCompatActivity {
     private ShoppingCart shoppingCart;
-    private TextView productNameTextView, productPriceTextView;
+    private TextView productNameTextView, productPriceTextView, productContentTextView;
     private ImageView productImageView;
 
     @Override
@@ -70,8 +70,9 @@ public class ProductsDetailActivity extends AppCompatActivity {
         productNameTextView = findViewById(R.id.textViewProductDetailName);
         productPriceTextView = findViewById(R.id.textViewProductDetailPrice);
         productImageView = findViewById(R.id.imageViewProductDetail);
-
+        productContentTextView = findViewById(R.id.textViewProductDetailContent);
         productNameTextView.setText(product.getName());
+        productContentTextView.setText(product.getDescription());
         productPriceTextView.setText("$" + product.getPrice());
         Glide.with(this).load(product.getImage()).into(productImageView);
     }

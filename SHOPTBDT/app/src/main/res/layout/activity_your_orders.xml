@@ -28,10 +28,10 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btnPayment"
+            android:id="@+id/btnChoosePayment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Payment" />
+            android:text="Choose Payment Method" />
     </LinearLayout>
 
 </LinearLayout>

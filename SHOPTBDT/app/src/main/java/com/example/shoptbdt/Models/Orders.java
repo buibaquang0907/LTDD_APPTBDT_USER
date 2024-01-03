@@ -1,8 +1,9 @@
 package com.example.shoptbdt.Models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Orders {
+public class Orders implements Serializable {
     String orderId;
     String payment;
     String status;

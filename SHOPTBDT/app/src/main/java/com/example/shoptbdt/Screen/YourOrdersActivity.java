@@ -2,10 +2,12 @@ package com.example.shoptbdt.Screen;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -56,7 +58,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
     private ProductAdapter productAdapter;
     private ShoppingCart shoppingCart;
     Button btnPayment;
-    private User userFirebase;
     String Publishablekey = "pk_test_51NcQH0CizuobP5vV9ZC0fDWT25Or9yeykFi2i5JXqARUstruauJWUMJqSDUIz2OxQj8vV1fa0Ytmolnmltx1xl1s00bihWFCpt";
     String Secretkey = "sk_test_51NcQH0CizuobP5vVKDY72s3RjPXJ6c0uyHGYZehGXOx3wzrWbKkoMGrbVB0ZC0kW7Oxe9EibT00T03GPlzIkDi6N00LjkfH6eP";
     String CustomerId;
@@ -70,7 +71,14 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         setContentView(R.layout.activity_your_orders);
         shoppingCart = ShoppingCart.getInstance();
         recyclerViewProducts = findViewById(R.id.rcvViewOrders);
-        btnPayment = findViewById(R.id.btnPayment);
+        btnPayment = findViewById(R.id.btnChoosePayment);
+
+        btnPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPaymentMethodDialog();
+            }
+        });
 
         // Initialize productList (if necessary)
         productList = new ArrayList<>(); // or fetch data from somewhere
@@ -84,13 +92,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
             productAdapter.notifyDataSetChanged();
             recyclerViewProducts.setAdapter(productAdapter);
         }
-        btnPayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                paymentFlow();
-
-            }
-        });
 
         PaymentConfiguration.init(this, Publishablekey);
         paymentSheet = new PaymentSheet(this,paymentSheetResult -> {
@@ -100,6 +101,29 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
 
         createCustomerAndGetId();
     }
+
+    public void showPaymentMethodDialog() {
+        String[] paymentMethods = {"Online Payment", "Cash On Delivery"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Payment Method");
+        builder.setSingleChoiceItems(paymentMethods, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    // User chose Online Payment
+                    paymentFlow();
+                } else {
+                    // User chose Cash On Delivery
+                    saveOrders("COD");
+                }
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void paymentFlow() {
         if (ClientSecret == null || EnphericalKey == null) {
             Log.e("PaymentFlow", "ClientSecret or EnphericalKey is null");
@@ -117,8 +141,8 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
 
     private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
         if (paymentSheetResult instanceof PaymentSheetResult.Completed) {
-            saveOrders();
-            shoppingCart.clearCart();
+            saveOrders("Online");
+
             Toast.makeText(YourOrdersActivity.this, "Payment succeeded", Toast.LENGTH_SHORT).show();
         }
         // Handle other cases (Cancelled, Failed, etc.)
@@ -252,7 +276,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         productAdapter.notifyDataSetChanged();
         Toast.makeText(YourOrdersActivity.this, "Product removd to cart", Toast.LENGTH_SHORT).show();
     }
-    public synchronized void saveOrders() {
+    public synchronized void saveOrders(String paymentMethod) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -269,7 +293,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
                     User userFirebase = document.toObject(User.class);
                     if (userFirebase != null) {
                         // Tạo và lưu đơn hàng sau khi có dữ liệu người dùng
-                        createAndSaveOrder(userFirebase, currentUser.getUid());
+                        createAndSaveOrder(userFirebase, currentUser.getUid(),paymentMethod);
                     }
                 } else {
                     // Xử lý không tìm thấy người dùng
@@ -294,7 +318,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         return totalPrice ;
     }
     // Phương thức để tạo và lưu đơn hàng
-    private void createAndSaveOrder(User userFirebase, String userId) {
+    private void createAndSaveOrder(User userFirebase, String userId,String paymentMethod) {
         Orders order = new Orders();
         order.setShippingAddress(userFirebase.getAddress());
 
@@ -304,12 +328,12 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         order.setDateOrder(currentTime);
 
         // Thiết lập các thông tin khác của đơn hàng
-        order.setProducts(productList); // Giả sử productList đã được khai báo và khởi tạo
+        order.setProducts(shoppingCart.getShoppingCart()); // Giả sử productList đã được khai báo và khởi tạo
         order.setDateCancelOrder("");
         order.setDateCompletedOrder("");
         order.setStatus("pending");
         order.setUserId(userId);
-        order.setPayment("Online");
+        order.setPayment(paymentMethod);
         order.setStatusReview("Review");
         order.setTotalPrice(getTotalPrice());
 
@@ -326,6 +350,8 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
                     // Lưu lại thông tin cập nhật vào Firestore
                     db.collection("orders").document(orderId).set(order)
                             .addOnSuccessListener(aVoid -> {
+                                shoppingCart.clearCart();
+                                productAdapter.notifyDataSetChanged();
                                 Toast.makeText(this, "Order successfully placed with ID: " + orderId, Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
