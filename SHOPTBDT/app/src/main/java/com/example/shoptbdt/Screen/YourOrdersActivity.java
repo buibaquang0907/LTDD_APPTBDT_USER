@@ -29,6 +29,7 @@ import com.example.shoptbdt.R;
 import com.example.shoptbdt.ShoppingCart;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -57,7 +58,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
     private List<Products> productList;
     private ProductAdapter productAdapter;
     private ShoppingCart shoppingCart;
-    Button btnPayment;
+    FloatingActionButton btnPayment;
     String Publishablekey = "pk_test_51NcQH0CizuobP5vV9ZC0fDWT25Or9yeykFi2i5JXqARUstruauJWUMJqSDUIz2OxQj8vV1fa0Ytmolnmltx1xl1s00bihWFCpt";
     String Secretkey = "sk_test_51NcQH0CizuobP5vVKDY72s3RjPXJ6c0uyHGYZehGXOx3wzrWbKkoMGrbVB0ZC0kW7Oxe9EibT00T03GPlzIkDi6N00LjkfH6eP";
     String CustomerId;
@@ -71,7 +72,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         setContentView(R.layout.activity_your_orders);
         shoppingCart = ShoppingCart.getInstance();
         recyclerViewProducts = findViewById(R.id.rcvViewOrders);
-        btnPayment = findViewById(R.id.btnChoosePayment);
+        btnPayment = findViewById(R.id.fabChoosePayment);
 
         btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override

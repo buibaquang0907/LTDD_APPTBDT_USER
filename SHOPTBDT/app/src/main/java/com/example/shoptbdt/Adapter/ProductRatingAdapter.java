@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.Models.RatingModel;
 import com.example.shoptbdt.R;
@@ -47,6 +49,9 @@ public class ProductRatingAdapter extends RecyclerView.Adapter<ProductRatingAdap
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Products product = productList.get(position);
         holder.productNameTextView.setText(product.getName());
+        Glide.with(holder.itemView.getContext())
+                .load(product.getImage())
+                .into(holder.productImageView);
         holder.ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
             if (fromUser) {
                 submitRating(product.getId(),holder);
@@ -99,13 +104,15 @@ public class ProductRatingAdapter extends RecyclerView.Adapter<ProductRatingAdap
     static class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView productNameTextView;
         RatingBar ratingBar;
-        EditText editTextContent; // Thêm EditText
+        EditText editTextContent;
+        ImageView productImageView;// Thêm EditText
 
         public ProductViewHolder(View itemView) {
             super(itemView);
             productNameTextView = itemView.findViewById(R.id.productNameTextView);
             ratingBar = itemView.findViewById(R.id.productRatingBar);
-            editTextContent = itemView.findViewById(R.id.contentProduct); // Gán EditText
+            editTextContent = itemView.findViewById(R.id.contentProduct);
+            productImageView = itemView.findViewById(R.id.productImageViewRating);
         }
     }
 }

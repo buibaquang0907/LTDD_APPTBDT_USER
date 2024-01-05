@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.R;
+import com.example.shoptbdt.Screen.Rating.RatingActivity;
 import com.example.shoptbdt.ShoppingCart;
 
 import java.util.Map;
@@ -52,15 +53,22 @@ public class ProductsDetailActivity extends AppCompatActivity {
         btnBuyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Map<Products, Integer> itemQuantities = shoppingCart.getCartItemQuantities();
+                Products product = (Products) intent.getSerializableExtra("product");
 
-                for (Map.Entry<Products, Integer> entry : itemQuantities.entrySet()) {
-                    Products product = entry.getKey();
-                    int quantity = entry.getValue();
-
-                    // Sử dụng product và quantity theo ý muốn
-                    Log.d("ProductInfo", product.getName() + ": " + quantity);
-                }
+                displayProductDetails(product);
+                shoppingCart.addToCart(product);
+                Intent intent = new Intent(ProductsDetailActivity.this, YourOrdersActivity.class);
+                intent.putExtra("product", product);
+                startActivity(intent);
+//                Map<Products, Integer> itemQuantities = shoppingCart.getCartItemQuantities();
+//
+//                for (Map.Entry<Products, Integer> entry : itemQuantities.entrySet()) {
+//                    Products product = entry.getKey();
+//                    int quantity = entry.getValue();
+//
+//                    // Sử dụng product và quantity theo ý muốn
+//                    Log.d("ProductInfo", product.getName() + ": " + quantity);
+//                }
             }
         });
 

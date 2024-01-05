@@ -56,7 +56,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrdersView
                 Intent intent = new Intent(context, RatingActivity.class);
                 intent.putExtra("ordersData", currentOrder);
                 context.startActivity(intent);
-                Toast.makeText(v.getContext(),"Rating coming soon", Toast.LENGTH_SHORT).show();
+
 
             }
         });

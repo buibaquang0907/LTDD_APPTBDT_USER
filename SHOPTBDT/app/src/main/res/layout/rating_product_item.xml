@@ -6,6 +6,14 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Image View with Rounded Corners -->
+    <ImageView
+        android:id="@+id/productImageViewRating"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="16dp"></ImageView>
+
     <TextView
         android:id="@+id/productNameTextView"
         android:layout_width="wrap_content"
@@ -27,5 +35,4 @@
         android:layout_height="match_parent"
         android:text="good"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
-    <!-- Bạn có thể thêm nhiều thành phần khác nếu cần, như ImageView cho hình ảnh sản phẩm, v.v. -->
 </LinearLayout>

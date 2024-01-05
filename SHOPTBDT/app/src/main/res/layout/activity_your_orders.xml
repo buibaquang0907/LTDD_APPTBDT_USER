@@ -20,18 +20,16 @@
         android:id="@+id/rcvViewOrders"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/btnChoosePayment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Choose Payment Method" />
-    </LinearLayout>
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabChoosePayment"
+        android:layout_width="1000dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:src="@drawable/cart" /> <!-- Replace with your icon resource -->
 
 </LinearLayout>
