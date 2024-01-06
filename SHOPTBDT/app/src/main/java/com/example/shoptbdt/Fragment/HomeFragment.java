@@ -101,9 +101,11 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         txtLocation = view.findViewById(R.id.txtLocation);
 
         editTextSearch = view.findViewById(R.id.editTextSearch);
+        editTextSearch.clearFocus();
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
             }
 
             @Override
