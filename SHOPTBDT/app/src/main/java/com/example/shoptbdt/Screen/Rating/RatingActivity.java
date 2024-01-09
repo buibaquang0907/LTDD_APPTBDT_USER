@@ -48,15 +48,6 @@ public class RatingActivity extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
         }
 
-
-        submitButton = findViewById(R.id.submitButtonRating);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(v.getContext(),"Rating coming soon", Toast.LENGTH_SHORT).show();
-//                submitRating();
-            }
-        });
     }
 
     private void saveRating(String productId, float rating) {

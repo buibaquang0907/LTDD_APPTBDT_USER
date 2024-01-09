@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.ProfileFragment">
@@ -53,10 +54,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
+            android:backgroundTint="#D703A9F4"
             android:text="Edit Profile"
             android:textAlignment="center"
-            android:textColor="@color/black"
-            android:backgroundTint="#D703A9F4"/>
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/btnYourOrders"

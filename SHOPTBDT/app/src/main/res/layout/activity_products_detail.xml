@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
@@ -42,12 +43,14 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:backgroundTint="#D703A9F4"
             android:layout_marginRight="55dp"
             android:text="Cart" />
         <Button
             android:id="@+id/btnBuyNow"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
+            android:backgroundTint="#D703A9F4"
             android:layout_marginTop="20dp"
             android:text="Buy Now" />
     </LinearLayout>
