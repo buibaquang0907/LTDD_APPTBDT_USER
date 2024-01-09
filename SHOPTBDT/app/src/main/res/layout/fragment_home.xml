@@ -1,59 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_home"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/white"
     android:orientation="vertical"
-    tools:context=".Fragment.HomeFragment"
-    android:id="@+id/fragment_home">
+    android:padding="10dp"
+    android:layout_marginBottom="50dp"
+    tools:context=".Fragment.HomeFragment">
 
     <TextView
         android:id="@+id/txtLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         android:layout_gravity="center"
-        android:textSize="16sp"
-        android:textAlignment="center">
-    </TextView>
+        android:textAlignment="center"
+        android:textSize="16sp"></TextView>
 
     <EditText
         android:id="@+id/editTextSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/border_background"
         android:drawableLeft="@android:drawable/ic_menu_search"
         android:hint="Search ..."></EditText>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Categories"
-        android:textSize="16sp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:textStyle="bold"/>
+        android:padding="10dp"
+        android:text="Categories"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCategories"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/border_background"
         android:clipToPadding="false"
         android:padding="10dp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Products"
-        android:textSize="16sp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:textStyle="bold"/>
+        android:padding="10dp"
+        android:text="Products"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProducts"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/border_background"
         android:clipToPadding="false"
-        android:padding="25dp" />
+        android:padding="10dp" />
 </LinearLayout>

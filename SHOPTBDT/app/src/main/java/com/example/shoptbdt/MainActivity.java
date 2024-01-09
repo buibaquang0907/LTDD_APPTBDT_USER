@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
                 if (navDestination.getId() == R.id.navigation_home ||
-                        navDestination.getId() == R.id.navigation_cart ||
+                        navDestination.getId() == R.id.navigation_favourite ||
                         navDestination.getId() == R.id.navigation_orders ||
                         navDestination.getId() == R.id.navigation_profile) {
                     bottomNavigationView.setVisibility(View.VISIBLE);

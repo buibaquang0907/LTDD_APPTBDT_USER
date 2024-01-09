@@ -12,9 +12,9 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_cart"
-        android:name="com.example.shoptbdt.Fragment.CartFragment"
-        tools:layout="@layout/fragment_cart" />
+        android:id="@+id/navigation_favourite"
+        android:name="com.example.shoptbdt.Fragment.FavouriteFragment"
+        tools:layout="@layout/fragment_favourite" />
 
     <fragment
         android:id="@+id/navigation_orders"

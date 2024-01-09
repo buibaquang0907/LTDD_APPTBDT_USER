@@ -70,8 +70,7 @@ public class OrdersFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_orders, container, false);
         RecyclerView recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
-        recyclerViewOrders.setLayoutManager(new LinearLayoutManager(getContext()));
-        TextView txtListEmpty = view.findViewById(R.id.txtListEmpty);
+        recyclerViewOrders.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
 
         ordersList = new ArrayList<>();
         ordersAdapter = new OrdersAdapter(getContext(),ordersList);
@@ -107,7 +106,4 @@ public class OrdersFragment extends Fragment {
                     }
                 });
     }
-
-
-
 }

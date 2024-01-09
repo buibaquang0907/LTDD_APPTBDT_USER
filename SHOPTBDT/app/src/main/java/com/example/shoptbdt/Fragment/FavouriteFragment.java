@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.example.shoptbdt.R;
 import com.example.shoptbdt.Screen.CheckOut.CheckOutFromCartActivity;
 
-public class CartFragment extends Fragment {
+public class FavouriteFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -24,12 +24,12 @@ public class CartFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public CartFragment() {
+    public FavouriteFragment() {
     }
 
     @NonNull
-    public static CartFragment newInstance(String param1, String param2) {
-        CartFragment fragment = new CartFragment();
+    public static FavouriteFragment newInstance(String param1, String param2) {
+        FavouriteFragment fragment = new FavouriteFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -46,35 +46,14 @@ public class CartFragment extends Fragment {
         }
     }
 
-    TextView textViewEmpty, txtTotal;
-    Button btnContinue;
+    RecyclerView recyclerViewCart;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cart, container, false);
-        RecyclerView recyclerViewCart = view.findViewById(R.id.recyclerViewCart);
-        textViewEmpty = view.findViewById(R.id.textViewEmpty);
-        txtTotal = view.findViewById(R.id.txtTotal);
-        btnContinue = view.findViewById(R.id.btnContinue);
+        View view = inflater.inflate(R.layout.fragment_favourite, container, false);
+        recyclerViewCart = view.findViewById(R.id.recyclerViewFavourite);
 
-//        if (recyclerViewCart.getAdapter() != null && recyclerViewCart.getAdapter().getItemCount() > 0) {
-//            recyclerViewCart.setVisibility(View.VISIBLE);
-//            textViewEmpty.setVisibility(View.GONE);
-//            //
-//
-//        } else {
-//            recyclerViewCart.setVisibility(View.GONE);
-//            textViewEmpty.setVisibility(View.VISIBLE);
-//        }
-
-        btnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CheckOutFromCartActivity.class);
-                startActivity(intent);
-            }
-        });
         return view;
     }
 

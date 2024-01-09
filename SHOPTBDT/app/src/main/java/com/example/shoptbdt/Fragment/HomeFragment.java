@@ -110,7 +110,9 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                filterProducts(charSequence.toString());
+                if (charSequence.length() > 0) {
+                    filterProducts(charSequence.toString());
+                }
             }
 
             @Override

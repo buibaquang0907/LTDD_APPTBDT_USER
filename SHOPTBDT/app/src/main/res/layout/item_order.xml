@@ -2,16 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:layout_marginTop="10dp"
     android:background="@drawable/border_background"
     android:orientation="vertical"
     android:layout_margin="8dp">
-
-    <!-- Image View Container -->
     <LinearLayout
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content"
         android:layout_marginRight="8dp">
         <ImageView
@@ -25,7 +20,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:orientation="vertical"
             android:padding="8dp">
 
@@ -72,7 +66,5 @@
                 android:text="Rate Product" />
         </LinearLayout>
     </LinearLayout>
-
-    <!-- Text Views and Button Container -->
 
 </LinearLayout>
