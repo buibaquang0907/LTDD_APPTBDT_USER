@@ -1,6 +1,5 @@
 package com.example.shoptbdt.Screen;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -22,18 +20,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.shoptbdt.Adapter.ProductAdapter;
+import com.example.shoptbdt.EmailSender;
 import com.example.shoptbdt.Models.Orders;
 import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.Models.User;
 import com.example.shoptbdt.R;
 import com.example.shoptbdt.ShoppingCart;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.stripe.android.PaymentConfiguration;
@@ -50,10 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class YourOrdersActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener {
+public class YourOrdersActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener, ProductAdapter.OnFavouriteClickListener {
     private RecyclerView recyclerViewProducts;
     private List<Products> productList;
     private ProductAdapter productAdapter;
@@ -65,6 +58,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
     String EnphericalKey;
     String ClientSecret;
     PaymentSheet paymentSheet;
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +82,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
 
         if(shoppingCart.getLenghtShoppingCart()!=0){
             productList = shoppingCart.getShoppingCart();
-            productAdapter = new ProductAdapter(productList, this);
+            productAdapter = new ProductAdapter(productList, this, this);
 
             productAdapter.notifyDataSetChanged();
             recyclerViewProducts.setAdapter(productAdapter);
@@ -277,6 +271,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         productAdapter.notifyDataSetChanged();
         Toast.makeText(YourOrdersActivity.this, "Product removd to cart", Toast.LENGTH_SHORT).show();
     }
+
     public synchronized void saveOrders(String paymentMethod) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -347,13 +342,14 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
 
                     // Cập nhật đơn hàng với orderId
                     order.setOrderId(orderId);
-
+                    sendEmailOnOrderSuccess(order);
                     // Lưu lại thông tin cập nhật vào Firestore
                     db.collection("orders").document(orderId).set(order)
                             .addOnSuccessListener(aVoid -> {
                                 shoppingCart.clearCart();
                                 productAdapter.notifyDataSetChanged();
                                 Toast.makeText(this, "Order successfully placed with ID: " + orderId, Toast.LENGTH_SHORT).show();
+
                             })
                             .addOnFailureListener(e -> {
                                 Toast.makeText(this, "Error updating order with ID", Toast.LENGTH_SHORT).show();
@@ -366,5 +362,26 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
                 });
     }
 
+    private void sendEmailOnOrderSuccess(Orders order) {
+        if (currentUser != null) {
+            String userEmail = currentUser.getEmail();
+            String userName = currentUser.getDisplayName();
+            String subject = "Order Confirmation - TBDT Shop";
+            StringBuilder messageBuilder = new StringBuilder("Thank you for your order!\n");
+            for (Products product : order.getProducts()) {
+                messageBuilder.append("Product Name: ").append(product.getName()).append("\n");
+            }
+            messageBuilder.append("Total Price: ").append(order.getTotalPrice()).append("\n");
+            messageBuilder.append("Order Date: ").append(order.getDateOrder()).append("\n");
+            messageBuilder.append("Shipping Address: ").append(order.getShippingAddress());
 
+            String message = messageBuilder.toString();
+            EmailSender.sendEmail(userName, userEmail, subject, message);
+        }
+    }
+
+    @Override
+    public void onFavouriteClick(Products product) {
+
+    }
 }

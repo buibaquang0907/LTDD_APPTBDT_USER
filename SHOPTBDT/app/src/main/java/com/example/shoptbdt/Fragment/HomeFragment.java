@@ -2,8 +2,6 @@ package com.example.shoptbdt.Fragment;
 
 import static android.content.ContentValues.TAG;
 
-import static androidx.core.location.LocationManagerCompat.getCurrentLocation;
-
 import android.Manifest;
 
 import android.content.Intent;
@@ -19,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -31,13 +30,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.shoptbdt.Adapter.CategoriesAdapter;
 import com.example.shoptbdt.Adapter.ProductAdapter;
 import com.example.shoptbdt.Models.Categories;
+import com.example.shoptbdt.Models.Favourite;
 import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.R;
 import com.example.shoptbdt.Screen.ProductsDetailActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -50,7 +56,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class HomeFragment extends Fragment implements ProductAdapter.OnProductClickListener {
+public class HomeFragment extends Fragment implements ProductAdapter.OnProductClickListener, ProductAdapter.OnFavouriteClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -79,6 +85,8 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
     private RecyclerView recyclerViewProducts;
     private List<Products> productList;
     private ProductAdapter productAdapter;
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+    FirebaseUser currentUser = auth.getCurrentUser();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
 
 
@@ -134,7 +142,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         recyclerViewProducts.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         productList = new ArrayList<>();
-        productAdapter = new ProductAdapter(productList, this);
+        productAdapter = new ProductAdapter(productList, this, this);
         recyclerViewProducts.setAdapter(productAdapter);
         fetchProductsFromFirestore();
 
@@ -253,4 +261,63 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         }
     }
 
+    @Override
+    public void onFavouriteClick(Products product) {
+        String userId = currentUser.getUid();
+        String productId = product.getId();
+        String productName = product.getName();
+        String productImage = product.getImage();
+        String productPrice = String.valueOf(product.getPrice());
+        Log.d("Show Favourite", "Current user ID: " + userId);
+        Log.d("Show Favourite", "Product ID: " + productId);
+        Log.d("Show Favourite", "Product Name: " + productName);
+        Log.d("Show Favourite", "Product Price: " + productPrice);
+        Favourite favourite = new Favourite(userId, productId, productName, productImage, productPrice);
+        checkIfFavouriteExists(userId, productId,favourite);
+    }
+
+    private void checkIfFavouriteExists(final String userId, final String productId, final Favourite favourite) {
+        String collectionPath = "favourite";
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(collectionPath)
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("productId", productId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (task.getResult().isEmpty()) {
+                                saveFavouriteToFirestore(favourite);
+                            } else {
+                                Log.d("", "Product đã tồn tại");
+                            }
+                        } else {
+                            Log.e("", "Error checking", task.getException());
+                        }
+                    }
+                });
+    }
+
+
+    private void saveFavouriteToFirestore(Favourite favourite) {
+        String collectionPath = "favourite";
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection(collectionPath)
+                .add(favourite)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("", "Đã lưu thành công. ID của tài liệu: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("", "Error saving ", e);
+                    }
+                });
+    }
 }

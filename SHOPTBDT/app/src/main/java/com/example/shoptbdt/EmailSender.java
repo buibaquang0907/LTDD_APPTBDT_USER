@@ -1,8 +1,12 @@
 package com.example.shoptbdt;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -37,24 +41,40 @@ public class EmailSender {
                 OkHttpClient client = new OkHttpClient();
 
                 MediaType mediaType = MediaType.parse("application/json");
-                String requestBody = String.format(
-                        "{\"service_id\":\"%s\",\"template_id\":\"%s\",\"user_id\":\"%s\",\"template_params\":{\"user_name\":\"%s\",\"user_email\":\"%s\",\"user_subject\":\"%s\",\"user_message\":\"%s\"}}",
-                        serviceId, templateId, userId, name, email, subject, message);
+
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("service_id", serviceId);
+                jsonBody.put("template_id", templateId);
+                jsonBody.put("user_id", userId);
+
+                JSONObject templateParams = new JSONObject();
+                templateParams.put("user_name", name);
+                templateParams.put("user_email", email);
+                templateParams.put("user_subject", subject);
+                templateParams.put("user_message", message);
+
+                jsonBody.put("template_params", templateParams);
+
+                RequestBody requestBody = RequestBody.create(mediaType, jsonBody.toString());
 
                 Request request = new Request.Builder()
                         .url(url)
-                        .post(RequestBody.create(mediaType, requestBody))
+                        .post(requestBody)
                         .addHeader("origin", "http://localhost")
                         .addHeader("Content-Type", "application/json")
                         .build();
 
                 Response response = client.newCall(request).execute();
-                System.out.println("Response Code: " + response.code());
-                System.out.println("Response Body: " + response.body().string());
+                int responseCode = response.code();
+                String responseBody = response.body().string();
+
+                Log.d("EmailSender", "Response Code: " + responseCode);
+                Log.d("EmailSender", "Response Body: " + responseBody);
+
                 return response.isSuccessful();
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException | JSONException e) {
+                Log.e("EmailSender", "Error sending email", e);
                 return false;
             }
         }
@@ -62,12 +82,11 @@ public class EmailSender {
         @Override
         protected void onPostExecute(@NonNull Boolean success) {
             if (success) {
-                System.out.println("Email sent successfully");
+                Log.d("EmailSender", "Email sent successfully");
             } else {
-                System.out.println("Error sending email");
+                Log.e("EmailSender", "Error sending email");
             }
         }
-
     }
 }
 

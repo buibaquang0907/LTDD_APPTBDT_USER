@@ -161,14 +161,6 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), AboutUsActivity.class);
                 startActivity(intent);
-//                String name = "Quang";
-//                String email = "bquangzzx@gmail.com";
-//                String subject = "Test Subject";
-//                String message = "Hello, this is a test email!";
-//
-//                // Call the sendEmail method
-//                // Test Send Email
-//                EmailSender.sendEmail(name, email, subject, message);
             }
         });
         btnChangePassword.setOnClickListener(new View.OnClickListener() {
