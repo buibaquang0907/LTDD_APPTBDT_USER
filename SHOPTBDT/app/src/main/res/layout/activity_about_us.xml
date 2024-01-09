@@ -6,4 +6,115 @@
     android:layout_height="match_parent"
     tools:context=".Screen.AboutUsActivity">
 
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            app:icon="@drawable/back"
+            app:iconTint="@color/black" />
+        <ImageView
+            android:id="@+id/imageViewAboutUs"
+            android:layout_width="250dp"
+            android:layout_height="160dp"
+            android:layout_below="@id/btnBack"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="13dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/team" />
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About Us"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_below="@id/imageViewAboutUs"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:id="@+id/textViewDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome to our application! We focus on delivering excellent products and services."
+            android:textSize="19dp"
+            android:gravity="start|top|left"
+            android:textAlignment="viewStart"
+            android:layout_below="@id/textViewTitle"/>
+
+        <TextView
+            android:id="@+id/textViewMission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Our Mission"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_below="@id/textViewDescription"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:id="@+id/textViewMissionDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="We strive to deliver a seamless shopping experience, offering a curated selection of the latest mobile devices and laptops."
+            android:textSize="19dp"
+            android:layout_below="@id/textViewMission"
+            android:gravity="start|top|left"
+            android:textAlignment="viewStart"/>
+
+        <TextView
+            android:id="@+id/textViewVision"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Our Vision"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_below="@id/textViewMissionDescription"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:id="@+id/textViewVisionDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="We aspire to create a tech-savvy community that thrives on possibilities and stays ahead in the dynamic world of electronics."
+            android:textSize="19dp"
+            android:layout_below="@id/textViewVision"
+            android:gravity="start|top|left"
+            android:textAlignment="viewStart"/>
+
+        <TextView
+            android:id="@+id/textViewTeam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Our Team"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_below="@id/textViewVisionDescription"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:id="@+id/textViewTeamDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Committed to excellence, our diverse team brings together expertise in technology and customer service."
+            android:textSize="19dp"
+            android:layout_below="@id/textViewTeam"
+            android:gravity="start|top|left"
+            android:textAlignment="viewStart"/>
+
+
+
+    </RelativeLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
