@@ -83,17 +83,6 @@
             app:iconTint="@color/black" />
 
         <Button
-            android:id="@+id/btnYourReviews"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Your Reviews"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            app:icon="@drawable/star"
-            app:iconTint="@color/black" />
-
-        <Button
             android:id="@+id/btnAboutUs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,17 +102,6 @@
             android:textAlignment="textStart"
             android:textColor="@color/black"
             app:icon="@drawable/support"
-            app:iconTint="@color/black" />
-
-        <Button
-            android:id="@+id/btnChangePassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Change Password"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            app:icon="@drawable/passwordkey"
             app:iconTint="@color/black" />
 
         <Button

@@ -57,8 +57,8 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Favo
                     .centerCrop()
                     .into(imageViewProductFavourite);
 
-            textViewProductNameFavourite.setText("Price Name: "+favourite.getProductName());
-            textViewProductPriceFavourite.setText("Price Price: "+String.valueOf(favourite.getProductPrice()));
+            textViewProductNameFavourite.setText("Name: "+favourite.getProductName());
+            textViewProductPriceFavourite.setText("Price: "+String.valueOf(favourite.getProductPrice()));
 
         }
     }

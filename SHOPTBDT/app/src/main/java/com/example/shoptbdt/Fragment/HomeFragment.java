@@ -254,7 +254,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
             if (addresses != null && addresses.size() > 0) {
                 Address address = addresses.get(0);
-                txtLocation.setText("Address: " + address.getAddressLine(0));
+                txtLocation.setText(address.getAddressLine(0));
             }
         } catch (IOException e) {
             Log.e(TAG, "Error getting address from location", e);

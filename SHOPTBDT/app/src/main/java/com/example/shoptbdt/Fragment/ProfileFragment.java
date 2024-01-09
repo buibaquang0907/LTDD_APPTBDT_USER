@@ -17,11 +17,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.shoptbdt.Auth.LoginActivity;
-import com.example.shoptbdt.EmailSender;
 import com.example.shoptbdt.Models.User;
 import com.example.shoptbdt.R;
 import com.example.shoptbdt.Screen.AboutUsActivity;
-import com.example.shoptbdt.Screen.ChangePasswordActivity;
 import com.example.shoptbdt.Screen.EditProfileActivity;
 import com.example.shoptbdt.Screen.FavouritesActivity;
 import com.example.shoptbdt.Screen.SupportActivity;
@@ -65,7 +63,7 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    Button btnEditProfile, btnSupport, btnYourOrders, btnFavourites, btnYourReviews, btnAboutUs, btnChangePassword, btnLogOut;
+    Button btnEditProfile, btnSupport, btnYourOrders, btnFavourites, btnYourReviews, btnAboutUs, btnLogOut;
     ImageView imgImageUser;
     TextView txtNameUser, txtEmailUser;
 
@@ -80,17 +78,20 @@ public class ProfileFragment extends Fragment {
         imgImageUser = view.findViewById(R.id.imgImageUser);
         txtEmailUser = view.findViewById(R.id.txtEmailUser);
         txtNameUser = view.findViewById(R.id.txtNameUser);
-
+//        btnYourReviews = view.findViewById(R.id.btnYourReviews);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         btnSupport = view.findViewById(R.id.btnSupport);
         btnYourOrders = view.findViewById(R.id.btnYourOrders);
         btnFavourites = view.findViewById(R.id.btnFavourites);
-        btnYourReviews = view.findViewById(R.id.btnYourReviews);
         btnAboutUs = view.findViewById(R.id.btnAboutUs);
         btnLogOut = view.findViewById(R.id.btnLogOut);
-        btnChangePassword = view.findViewById(R.id.btnChangePassword);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        Glide.with(requireContext())
+                .load(currentUser.getPhotoUrl())
+                .into(imgImageUser);
+
         if (currentUser != null) {
             DocumentReference userRef = db.collection("users").document(currentUser.getUid());
             userRef.get().addOnCompleteListener(task -> {
@@ -149,24 +150,17 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        btnYourReviews.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), YourReviewsActivity.class);
-                startActivity(intent);
-            }
-        });
+//        btnYourReviews.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), YourReviewsActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         btnAboutUs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), AboutUsActivity.class);
-                startActivity(intent);
-            }
-        });
-        btnChangePassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
                 startActivity(intent);
             }
         });
