@@ -31,6 +31,15 @@ public class ProductsDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_products_detail);
         shoppingCart = ShoppingCart.getInstance();
+        Button btnBack = findViewById(R.id.btnBack);
+
+        // Đặt lắng nghe sự kiện khi nút Back được nhấn
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed(); // Gọi phương thức onBackPressed để quay trở lại màn hình trước đó
+            }
+        });
         Button btnAddTooCart = findViewById(R.id.btnAddtoCart);
         Intent intent = getIntent();
         if (intent != null) {

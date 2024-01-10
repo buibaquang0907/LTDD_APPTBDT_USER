@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -65,6 +66,15 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_your_orders);
         shoppingCart = ShoppingCart.getInstance();
+        Button btnBack = findViewById(R.id.btnBack);
+
+        // Đặt lắng nghe sự kiện khi nút Back được nhấn
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed(); // Gọi phương thức onBackPressed để quay trở lại màn hình trước đó
+            }
+        });
         recyclerViewProducts = findViewById(R.id.rcvViewOrders);
         btnPayment = findViewById(R.id.fabChoosePayment);
 
