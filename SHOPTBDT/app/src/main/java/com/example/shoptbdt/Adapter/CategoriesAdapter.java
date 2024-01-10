@@ -1,5 +1,8 @@
 package com.example.shoptbdt.Adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,15 +13,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.shoptbdt.Models.Categories;
+import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.R;
+import com.example.shoptbdt.Screen.ProductsDetailActivity;
+import com.example.shoptbdt.Screen.YourOrdersActivity;
 
 import java.util.List;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoriesViewHolder> {
     private List<Categories> categoriesList;
+    private OnCategoryClickListener categoryClickListener;
 
-    public CategoriesAdapter(List<Categories> categoriesList) {
+    public CategoriesAdapter(List<Categories> categoriesList, OnCategoryClickListener categoryClickListener) {
         this.categoriesList = categoriesList;
+        this.categoryClickListener = categoryClickListener;
+    }
+
+    public interface OnCategoryClickListener {
+        void onCategoryClick(Categories category);
     }
 
     @NonNull
@@ -39,6 +51,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             @Override
             public void onClick(View v) {
                 // Handle category item click
+                categoryClickListener.onCategoryClick(category);
             }
         });
     }

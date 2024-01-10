@@ -18,6 +18,7 @@ import com.example.shoptbdt.R;
 import com.example.shoptbdt.Screen.Rating.RatingActivity;
 import com.example.shoptbdt.ShoppingCart;
 
+import java.util.List;
 import java.util.Map;
 
 public class ProductsDetailActivity extends AppCompatActivity {
@@ -84,4 +85,6 @@ public class ProductsDetailActivity extends AppCompatActivity {
         productPriceTextView.setText("$" + product.getPrice());
         Glide.with(this).load(product.getImage()).into(productImageView);
     }
+
+
 }

@@ -56,7 +56,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class HomeFragment extends Fragment implements ProductAdapter.OnProductClickListener, ProductAdapter.OnFavouriteClickListener {
+public class HomeFragment extends Fragment implements ProductAdapter.OnProductClickListener, ProductAdapter.OnFavouriteClickListener, CategoriesAdapter.OnCategoryClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -133,7 +133,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         recyclerViewCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         categoriesList = new ArrayList<>();
-        categoriesAdapter = new CategoriesAdapter(categoriesList);
+        categoriesAdapter = new CategoriesAdapter(categoriesList, this);
         recyclerViewCategories.setAdapter(categoriesAdapter);
         getCategoriesFromFireStore();
 
@@ -170,6 +170,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
     }
 
     private void fetchProductsFromFirestore() {
+        productList.clear();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collectionGroup("products")
@@ -201,12 +202,22 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
                 });
     }
 
+//    private void launchProductsDetailActivity(List<Products> productsList) {
+//        if (!productsList.isEmpty()) {
+//            Intent intent = new Intent(getActivity(), ProductAdapter.class);
+//            intent.putExtra("products", new ArrayList<>(productsList));
+//            startActivity(intent);
+//        } else {
+//            // Handle the case where no products are found for the selected category
+//            Toast.makeText(getContext(), "No products found for the selected category", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
     private Products convertMapToProducts(Map<String, Object> data) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(data);
         return gson.fromJson(jsonString, Products.class);
     }
-
     @Override
     public void onProductClick(Products product) {
         Intent intent = new Intent(getActivity(), ProductsDetailActivity.class);
@@ -214,6 +225,43 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         startActivity(intent);
     }
 
+    @Override
+    public void onCategoryClick(Categories category) {
+
+        fetchProductsByCategoryFromFirestore(category.getId());
+    }
+
+
+    private void fetchProductsByCategoryFromFirestore(String categoryId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("categories")
+                .document(categoryId)
+                .collection("products")
+                .whereEqualTo("categoriesId", categoryId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<Products> productsList = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> data = document.getData();
+                                try {
+                                    Products product = convertMapToProducts(data);
+                                    productsList.add(product);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Error converting data to Products: " + e.getMessage());
+                                }
+                            }
+
+                            // Pass the productsList to ProductsDetailActivity
+                            productAdapter.updateProduct(productsList);
+                        } else {
+                            Log.w(TAG, "Error getting products by category from Firestore.", task.getException());
+                        }
+                    }
+                });
+    }
     private void filterProducts(@NonNull String searchText) {
         List<Products> filteredList = new ArrayList<>();
 

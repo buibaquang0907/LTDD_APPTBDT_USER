@@ -69,22 +69,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:orientation="horizontal"
         android:weightSum="2">
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/loginGoogleButton"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1" />
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/loginFacebookButton"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:backgroundTint="#D703A9F4"
+            android:layout_gravity="center"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="15dp"
+            android:paddingTop="13dp"
             android:paddingBottom="15dp"
             android:text="Sign in with Facebook" />
     </LinearLayout>

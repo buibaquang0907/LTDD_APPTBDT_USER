@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.example.shoptbdt.MainActivity;
 import com.example.shoptbdt.Models.User;
 import com.example.shoptbdt.R;
+import com.facebook.CallbackManager;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -36,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private EditText editTextLoginEmail, editTextLoginPassword;
     private GoogleApiClient googleApiClient;
+    private LoginButton loginButton;
+    CallbackManager callbackManager;
     private static final int RC_SIGN_IN = 9001;
 
     @Override
@@ -48,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         editTextLoginPassword = findViewById(R.id.editTextLoginPassword);
         Button btnLogin = findViewById(R.id.buttonLogin);
         TextView txtRegister = findViewById(R.id.txtRegister);
+        loginButton = findViewById(R.id.loginFacebookButton);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
