@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.shoptbdt.Adapter.CartAdapter;
 import com.example.shoptbdt.Adapter.ProductAdapter;
 import com.example.shoptbdt.EmailSender;
 import com.example.shoptbdt.Models.Orders;
@@ -50,7 +51,7 @@ import java.util.Map;
 public class YourOrdersActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener, ProductAdapter.OnFavouriteClickListener {
     private RecyclerView recyclerViewProducts;
     private List<Products> productList;
-    private ProductAdapter productAdapter;
+    private CartAdapter cartAdapter;
     private ShoppingCart shoppingCart;
     FloatingActionButton btnPayment;
     String Publishablekey = "pk_test_51NcQH0CizuobP5vV9ZC0fDWT25Or9yeykFi2i5JXqARUstruauJWUMJqSDUIz2OxQj8vV1fa0Ytmolnmltx1xl1s00bihWFCpt";
@@ -66,18 +67,17 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_your_orders);
         shoppingCart = ShoppingCart.getInstance();
-        Button btnBack = findViewById(R.id.btnBack);
 
-        // Đặt lắng nghe sự kiện khi nút Back được nhấn
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed(); // Gọi phương thức onBackPressed để quay trở lại màn hình trước đó
-            }
-        });
         recyclerViewProducts = findViewById(R.id.rcvViewOrders);
         btnPayment = findViewById(R.id.fabChoosePayment);
 
+        Button btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,10 +92,10 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
 
         if(shoppingCart.getLenghtShoppingCart()!=0){
             productList = shoppingCart.getShoppingCart();
-            productAdapter = new ProductAdapter(productList, this, this);
+            cartAdapter = new CartAdapter(productList, this::onProductClick);
 
-            productAdapter.notifyDataSetChanged();
-            recyclerViewProducts.setAdapter(productAdapter);
+            cartAdapter.notifyDataSetChanged();
+            recyclerViewProducts.setAdapter(cartAdapter);
         }
 
         PaymentConfiguration.init(this, Publishablekey);
@@ -147,10 +147,8 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
     private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
         if (paymentSheetResult instanceof PaymentSheetResult.Completed) {
             saveOrders("Online");
-
             Toast.makeText(YourOrdersActivity.this, "Payment succeeded", Toast.LENGTH_SHORT).show();
         }
-        // Handle other cases (Cancelled, Failed, etc.)
     }
     private void getClientSecret(String customerId, String enphericalKey) {
         StringRequest request = new StringRequest(Request.Method.POST, "https://api.stripe.com/v1/payment_intents", new Response.Listener<String>() {
@@ -159,9 +157,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
                 try {
                     JSONObject object = new JSONObject(response);
                     ClientSecret = object.getString("client_secret");
-                    Toast.makeText(YourOrdersActivity.this,CustomerId,Toast.LENGTH_SHORT).show();
-
-
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -169,7 +164,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(YourOrdersActivity.this,error.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
@@ -177,9 +171,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
 
                 Map<String, String> header = new HashMap<>();
                 header.put("Authorization","Bearer " + Secretkey);
-
-
-
                 return header;
             }
 
@@ -188,7 +179,7 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("customer",CustomerId);
-                params.put("amount","100"+"00");
+                params.put("amount","100" + "00");
                 params.put("currency","USD");
                 params.put("automatic_payment_methods[enabled]","true");
                 return params;
@@ -205,7 +196,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
                 try {
                     JSONObject object = new JSONObject(response);
                     EnphericalKey = object.getString("id");
-                    Toast.makeText(YourOrdersActivity.this,CustomerId,Toast.LENGTH_SHORT).show();
                     getClientSecret(CustomerId,EnphericalKey);
 
                 }catch (JSONException e){
@@ -215,7 +205,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(YourOrdersActivity.this,error.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
@@ -223,7 +212,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
 
                 Map<String, String> header = new HashMap<>();
                 header.put("Authorization","Bearer " + Secretkey);
-
                 header.put("Stripe-Version", "2022-11-15");
 
                 return header;
@@ -250,7 +238,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
                 try {
                     JSONObject object = new JSONObject(response);
                     CustomerId = object.getString("id");
-                    Toast.makeText(YourOrdersActivity.this, CustomerId, Toast.LENGTH_SHORT).show();
                     getEnphericalKey();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -259,7 +246,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(YourOrdersActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
@@ -275,10 +261,11 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
     }
 
 
+
     @Override
     public void onProductClick(Products product) {
         shoppingCart.removeToCart(product);
-        productAdapter.notifyDataSetChanged();
+        cartAdapter.notifyDataSetChanged();
         Toast.makeText(YourOrdersActivity.this, "Product removd to cart", Toast.LENGTH_SHORT).show();
     }
 
@@ -349,7 +336,6 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
                 .addOnSuccessListener(documentReference -> {
                     // Xử lý thành công
                     String orderId = documentReference.getId();
-
                     // Cập nhật đơn hàng với orderId
                     order.setOrderId(orderId);
                     sendEmailOnOrderSuccess(order);
@@ -357,14 +343,12 @@ public class YourOrdersActivity extends AppCompatActivity implements ProductAdap
                     db.collection("orders").document(orderId).set(order)
                             .addOnSuccessListener(aVoid -> {
                                 shoppingCart.clearCart();
-                                productAdapter.notifyDataSetChanged();
-                                Toast.makeText(this, "Order successfully placed with ID: " + orderId, Toast.LENGTH_SHORT).show();
-
+                                cartAdapter.notifyDataSetChanged();
+                                Toast.makeText(this, "Order successfully", Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
                                 Toast.makeText(this, "Error updating order with ID", Toast.LENGTH_SHORT).show();
                             });
-                    Toast.makeText(this, "Order successfully placed", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     // Xử lý lỗi

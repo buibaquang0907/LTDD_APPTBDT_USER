@@ -2,6 +2,8 @@ package com.example.shoptbdt.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +19,14 @@ import com.bumptech.glide.Glide;
 import com.example.shoptbdt.Models.Orders;
 import com.example.shoptbdt.R;
 import com.example.shoptbdt.Screen.Rating.RatingActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder> {
 
@@ -48,19 +56,124 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrdersView
         holder.priceTextView.setText("Price: " + currentOrder.getTotalPrice());
         holder.paymentTextView.setText("Payment: " + currentOrder.getPayment());
         holder.statusTextView.setText("Status: " + currentOrder.getStatus());
-        holder.rateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Xử lý sự kiện đánh giá sản phẩm tại đây
-                // Ví dụ: mở một Activity hoặc Fragment để thu thập đánh giá
-                Intent intent = new Intent(context, RatingActivity.class);
-                intent.putExtra("ordersData", currentOrder);
-                context.startActivity(intent);
+        if (currentOrder.getStatus().equals("delivering")) {
+            holder.rateButton.setText("Delivered");
+            holder.rateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateOrderStatusToCompleted(currentOrder);
+                }
+            });
+        } else if (currentOrder.getStatus().equals("completed") && !currentOrder.getStatusReview().equals("reviewed")) {
+            holder.rateButton.setText("Rate Product");
+            holder.rateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Start the RatingActivity
+                    Intent intent = new Intent(context, RatingActivity.class);
+                    intent.putExtra("ordersData", currentOrder);
+                    context.startActivity(intent);
+                }
+            });
+        } else if (currentOrder.getStatusReview().equals("reviewed")) {
+            holder.rateButton.setEnabled(false);
+        }
 
-
-            }
-        });
+        if (currentOrder.getStatus().equals("delivering")) {
+            holder.cancelButton.setVisibility(View.VISIBLE);
+            holder.cancelButton.setOnClickListener(v -> cancelOrder(currentOrder));
+        } else {
+            holder.cancelButton.setVisibility(View.GONE);
+        }
+        updateButtonStateAndClickListener(holder, currentOrder);
     }
+
+    private void cancelOrder(Orders order) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String currentTime = dateFormat.format(new Date());
+
+        db.collection("orders").document(order.getOrderId()).update("status", "cancelled")
+                .addOnSuccessListener(aVoid -> {
+                    order.setStatus("cancelled");
+                    Toast.makeText(context, "Your orders is cancelled", Toast.LENGTH_SHORT).show();
+                    notifyDataSetChanged();
+                });
+        db.collection("orders").document(order.getOrderId()).update("dateCancelOrder", currentTime)
+                .addOnSuccessListener(aVoid -> {
+                    order.setDateCancelOrder(currentTime);
+                    notifyDataSetChanged();
+                });
+    }
+
+    private void updateButtonStateAndClickListener(OrdersViewHolder holder, Orders currentOrder) {
+        // Hide all buttons initially
+        holder.rateButton.setVisibility(View.GONE);
+        holder.cancelButton.setVisibility(View.GONE);
+
+        switch (currentOrder.getStatus()) {
+            case "pending":
+                holder.cancelButton.setVisibility(View.VISIBLE);
+                holder.cancelButton.setText("Cancel Order");
+                holder.cancelButton.setOnClickListener(v -> cancelOrder(currentOrder));
+
+                break;
+            case "delivering":
+                holder.rateButton.setVisibility(View.VISIBLE);
+                holder.rateButton.setText("Delivered");
+                holder.rateButton.setOnClickListener(v -> updateOrderStatusToCompleted(currentOrder));
+                break;
+            case "completed":
+                if (!currentOrder.getStatusReview().equals("reviewed")) {
+                    holder.rateButton.setVisibility(View.VISIBLE);
+                    holder.rateButton.setText("Rate Product");
+                    holder.rateButton.setOnClickListener(v -> {
+                        Intent intent = new Intent(context, RatingActivity.class);
+                        intent.putExtra("ordersData", currentOrder);
+                        context.startActivity(intent);
+                    });
+                }
+                break;
+            case "cancelled":
+                // No buttons should be visible if the order is cancelled
+                break;
+        }
+    }
+
+
+
+    private void updateOrderStatusToCompleted(Orders order) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String currentTime = dateFormat.format(new Date());
+        db.collection("orders").document(order.getOrderId()).update("status", "completed")
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        order.setStatus("completed");
+                        notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
+        db.collection("orders").document(order.getOrderId()).update("dateCompletedOrder", currentTime)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        order.setDateCompletedOrder(currentTime);
+                        notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
+    }
+
 
 
     @Override
@@ -76,7 +189,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrdersView
         TextView priceTextView;
         TextView dateOrderTextView;
         Button rateButton;
-
+        Button cancelButton;
         public OrdersViewHolder(@NonNull View itemView) {
             super(itemView);
             paymentTextView = itemView.findViewById(R.id.paymentTextView);
@@ -86,6 +199,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrdersView
             priceTextView = itemView.findViewById(R.id.priceTextView);
             dateOrderTextView = itemView.findViewById(R.id.dateOrderTextView);
             rateButton = itemView.findViewById(R.id.rateButton);
+            cancelButton = itemView.findViewById(R.id.cancelButton);
         }
     }
 

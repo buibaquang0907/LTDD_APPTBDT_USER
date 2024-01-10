@@ -348,9 +348,9 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
                         if (task.isSuccessful()) {
                             if (task.getResult().isEmpty()) {
                                 saveFavouriteToFirestore(favourite);
-                                Toast.makeText(getApplicationContext(), "Lưu thành công", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Product is saved to wishlist!", Toast.LENGTH_SHORT).show();
                             } else {
-                                Log.d("", "Product đã tồn tại");
+                                Toast.makeText(getContext(), "Product is existed!", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             Log.e("", "Error checking", task.getException());

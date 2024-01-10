@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:backgroundTint="@color/white"
-            android:text="Your orders"
+            android:text="Your Cart"
             android:textAlignment="textStart"
             android:textColor="@color/black"
             app:icon="@drawable/cart"
