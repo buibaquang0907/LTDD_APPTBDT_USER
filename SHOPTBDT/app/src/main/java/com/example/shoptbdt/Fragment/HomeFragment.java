@@ -2,6 +2,8 @@ package com.example.shoptbdt.Fragment;
 
 import static android.content.ContentValues.TAG;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 import android.Manifest;
 
 import android.content.Intent;
@@ -179,13 +181,9 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Retrieve data as a Map
                                 Map<String, Object> data = document.getData();
-
                                 Log.d(TAG, "Data for document " + document.getId() + ": " + data);
-
                                 try {
                                     Products product = convertMapToProducts(data);
                                     productList.add(product);
@@ -193,7 +191,6 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
                                     Log.e(TAG, "Error converting data to Products: " + e.getMessage());
                                 }
                             }
-
                             productAdapter.notifyDataSetChanged();
                         } else {
                             Log.w(TAG, "Error getting products from Firestore.", task.getException());
@@ -303,6 +300,19 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
             if (addresses != null && addresses.size() > 0) {
                 Address address = addresses.get(0);
                 txtLocation.setText(address.getAddressLine(0));
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                if (currentUser != null) {
+                    String userId = currentUser.getUid();
+                    DocumentReference userRef = db.collection("users").document(userId);
+                    userRef.update("address", address.getAddressLine(0))
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "Address updated successfully");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Error updating address", e);
+                            });
+                }
             }
         } catch (IOException e) {
             Log.e(TAG, "Error getting address from location", e);
@@ -321,7 +331,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         Log.d("Show Favourite", "Product Name: " + productName);
         Log.d("Show Favourite", "Product Price: " + productPrice);
         Favourite favourite = new Favourite(userId, productId, productName, productImage, productPrice);
-        checkIfFavouriteExists(userId, productId,favourite);
+        checkIfFavouriteExists(userId, productId, favourite);
     }
 
     private void checkIfFavouriteExists(final String userId, final String productId, final Favourite favourite) {
@@ -338,6 +348,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
                         if (task.isSuccessful()) {
                             if (task.getResult().isEmpty()) {
                                 saveFavouriteToFirestore(favourite);
+                                Toast.makeText(getApplicationContext(), "Lưu thành công", Toast.LENGTH_SHORT).show();
                             } else {
                                 Log.d("", "Product đã tồn tại");
                             }

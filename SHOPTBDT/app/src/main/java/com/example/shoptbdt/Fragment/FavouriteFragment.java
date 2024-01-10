@@ -1,9 +1,13 @@
 package com.example.shoptbdt.Fragment;
 
+import static android.content.ContentValues.TAG;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,16 +19,25 @@ import android.view.ViewGroup;
 
 import com.example.shoptbdt.Adapter.FavouriteAdapter;
 import com.example.shoptbdt.Models.Favourite;
+import com.example.shoptbdt.Models.Products;
 import com.example.shoptbdt.R;
+import com.example.shoptbdt.Screen.ProductsDetailActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class FavouriteFragment extends Fragment {
+public class FavouriteFragment extends Fragment implements FavouriteAdapter.OnItemClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -57,6 +70,7 @@ public class FavouriteFragment extends Fragment {
     private RecyclerView recyclerViewFavourite;
     private FavouriteAdapter favouriteAdapter;
     private List<Favourite> favouriteList;
+    private List<Products> productList;
 
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = auth.getCurrentUser();
@@ -70,7 +84,7 @@ public class FavouriteFragment extends Fragment {
         recyclerViewFavourite.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         favouriteList = new ArrayList<>();
-        favouriteAdapter = new FavouriteAdapter(favouriteList);
+        favouriteAdapter = new FavouriteAdapter(favouriteList, this);
         recyclerViewFavourite.setAdapter(favouriteAdapter);
         fetchFavouriteData();
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback());
@@ -101,6 +115,62 @@ public class FavouriteFragment extends Fragment {
                     });
         }
     }
+
+    @Override
+    public void onButtonClickListener(String productId) {
+        Log.d("", "Product ID: " + productId);
+        FirestoreQueryMethodProduct(productId);
+
+    }
+
+    private void FirestoreQueryMethodProduct(String productId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        productList = new ArrayList<>();
+        db.collectionGroup("products")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> data = document.getData();
+                                Log.d(TAG, "Data for document " + document.getId() + ": " + data);
+                                try {
+                                    Products product = convertMapToProducts(data);
+                                    productList.add(product);
+                                    Log.d("", "id" + product.getId());
+                                    Log.d("", "name" + product.getName());
+                                    Log.d("", "price" + product.getPrice());
+                                    Log.d("", "des" + product.getDescription());
+                                    Log.d("", "img" + product.getImage());
+                                    Log.d("", "stt" + product.getStatus());
+
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Error converting data to Products: " + e.getMessage());
+                                }
+                            }
+                            for (Products product : productList) {
+                                if (product.getId().equals(productId)) {
+                                    Log.d("", "Product ID ttt:" + productId);
+                                    Log.d("", "Product Name ttt: " + product.getName());
+                                    Log.d("", "Product Price ttt: " + product.getPrice());
+                                    Intent intent = new Intent(getContext(), ProductsDetailActivity.class);
+                                    intent.putExtra("product", product);
+                                    getContext().startActivity(intent);
+                                }
+                            }
+                        } else {
+                            Log.w(TAG, "Error getting products from Firestore.", task.getException());
+                        }
+                    }
+                });
+    }
+    private Products convertMapToProducts(Map<String, Object> data) {
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(data);
+        return gson.fromJson(jsonString, Products.class);
+    }
+
 
     private class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
         SwipeToDeleteCallback() {

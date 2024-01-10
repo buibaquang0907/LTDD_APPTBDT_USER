@@ -104,8 +104,6 @@ public class ProfileFragment extends Fragment {
                             Glide.with(this)
                                     .load(imageUrl)
                                     .into(imgImageUser);
-                        } else {
-                            imgImageUser.setImageResource(R.drawable.person);
                         }
                         txtNameUser.setText(user.getName());
                         txtEmailUser.setText(user.getEmail());

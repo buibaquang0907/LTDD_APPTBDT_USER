@@ -17,12 +17,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
+        android:layout_marginBottom="5dp"
         android:textSize="16sp"></TextView>
 
     <EditText
         android:id="@+id/editTextSearch"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:background="@drawable/border_background"
         android:drawableLeft="@android:drawable/ic_menu_search"
         android:hint="Search ..."></EditText>

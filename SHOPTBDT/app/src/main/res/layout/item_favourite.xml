@@ -4,9 +4,9 @@
 
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:padding="10dp"
     android:background="@drawable/border_background"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,6 +20,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center"
+            android:layout_marginRight="20dp"
             android:scaleType="centerCrop" />
 
         <LinearLayout
@@ -43,6 +44,14 @@
                 android:text="Product Price: "
                 android:textColor="#333333" />
 
+            <Button
+                android:id="@+id/btnViewProductFavourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="right"
+                android:backgroundTint="#D703A9F4"
+                android:text="Buy" />
         </LinearLayout>
     </LinearLayout>
 
