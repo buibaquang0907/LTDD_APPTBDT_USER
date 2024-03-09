@@ -138,12 +138,6 @@ public class FavouriteFragment extends Fragment implements FavouriteAdapter.OnIt
                                 try {
                                     Products product = convertMapToProducts(data);
                                     productList.add(product);
-                                    Log.d("", "id" + product.getId());
-                                    Log.d("", "name" + product.getName());
-                                    Log.d("", "price" + product.getPrice());
-                                    Log.d("", "des" + product.getDescription());
-                                    Log.d("", "img" + product.getImage());
-                                    Log.d("", "stt" + product.getStatus());
 
                                 } catch (Exception e) {
                                     Log.e(TAG, "Error converting data to Products: " + e.getMessage());
@@ -151,9 +145,6 @@ public class FavouriteFragment extends Fragment implements FavouriteAdapter.OnIt
                             }
                             for (Products product : productList) {
                                 if (product.getId().equals(productId)) {
-                                    Log.d("", "Product ID ttt:" + productId);
-                                    Log.d("", "Product Name ttt: " + product.getName());
-                                    Log.d("", "Product Price ttt: " + product.getPrice());
                                     Intent intent = new Intent(getContext(), ProductsDetailActivity.class);
                                     intent.putExtra("product", product);
                                     getContext().startActivity(intent);

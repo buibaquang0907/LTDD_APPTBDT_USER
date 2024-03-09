@@ -199,17 +199,6 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
                 });
     }
 
-//    private void launchProductsDetailActivity(List<Products> productsList) {
-//        if (!productsList.isEmpty()) {
-//            Intent intent = new Intent(getActivity(), ProductAdapter.class);
-//            intent.putExtra("products", new ArrayList<>(productsList));
-//            startActivity(intent);
-//        } else {
-//            // Handle the case where no products are found for the selected category
-//            Toast.makeText(getContext(), "No products found for the selected category", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
     private Products convertMapToProducts(Map<String, Object> data) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(data);
@@ -326,10 +315,6 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         String productName = product.getName();
         String productImage = product.getImage();
         String productPrice = String.valueOf(product.getPrice());
-        Log.d("Show Favourite", "Current user ID: " + userId);
-        Log.d("Show Favourite", "Product ID: " + productId);
-        Log.d("Show Favourite", "Product Name: " + productName);
-        Log.d("Show Favourite", "Product Price: " + productPrice);
         Favourite favourite = new Favourite(userId, productId, productName, productImage, productPrice);
         checkIfFavouriteExists(userId, productId, favourite);
     }

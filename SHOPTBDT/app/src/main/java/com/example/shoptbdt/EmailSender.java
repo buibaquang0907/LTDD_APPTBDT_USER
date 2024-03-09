@@ -67,10 +67,6 @@ public class EmailSender {
                 Response response = client.newCall(request).execute();
                 int responseCode = response.code();
                 String responseBody = response.body().string();
-
-                Log.d("EmailSender", "Response Code: " + responseCode);
-                Log.d("EmailSender", "Response Body: " + responseBody);
-
                 return response.isSuccessful();
 
             } catch (IOException | JSONException e) {
